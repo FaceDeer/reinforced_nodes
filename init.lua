@@ -47,7 +47,11 @@ reinforced_nodes.register_reinforced_node = function(base_node_name, new_node_na
 	end	
 	-- TODO: more sophisticated overlay_texture handling that allows a table to be used
 	for i, base_tile in ipairs(new_def.tiles) do
-		new_def.tiles[i] = base_tile .. "^" .. reinforcement_def.overlay_texture
+		if type(base_tile) == "string" then		
+			new_def.tiles[i] = base_tile .. "^" .. reinforcement_def.overlay_texture
+		elseif type(base_tile) == "table" then
+			base_tile.name = base_tile.name .. "^" .. reinforcement_def.overlay_texture
+		end
 	end
 	
 	if new_def.groups == nil then
@@ -134,4 +138,33 @@ minetest.register_craft({
 if minetest.get_modpath("default") then
 	reinforced_nodes.register_reinforced_node("default:stonebrick", "reinforced_nodes:stonebrick",
 		{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+	reinforced_nodes.register_reinforced_node("default:desert_stonebrick", "reinforced_nodes:desert_stonebrick",
+		{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+	reinforced_nodes.register_reinforced_node("default:sandstonebrick", "reinforced_nodes:sandstonebrick",
+		{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+	reinforced_nodes.register_reinforced_node("default:desert_sandstone_brick", "reinforced_nodes:desert_sandstone_brick",
+		{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+	reinforced_nodes.register_reinforced_node("default:silver_sandstone_brick", "reinforced_nodes:silver_sandstone_brick",
+		{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+	reinforced_nodes.register_reinforced_node("default:obsidianbrick", "reinforced_nodes:obsidianbrick",
+		{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+		
+	if minetest.get_modpath("stairs") then
+		local stair_reinforcement = function(stair_name)
+			reinforced_nodes.register_reinforced_node("stairs:slab_"..stair_name, "reinforced_nodes:slab_"..stair_name,
+				{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+			reinforced_nodes.register_reinforced_node("stairs:stair_"..stair_name, "reinforced_nodes:stair_"..stair_name,
+				{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+			reinforced_nodes.register_reinforced_node("stairs:stair_inner_"..stair_name, "reinforced_nodes:stair_inner_"..stair_name,
+				{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+			reinforced_nodes.register_reinforced_node("stairs:stair_outer_"..stair_name, "reinforced_nodes:stair_outer_"..stair_name,
+				{overlay_texture = "reinforced_nodes_default_stone_brick.png"})
+		end
+		stair_reinforcement("stonebrick")
+		stair_reinforcement("desert_stonebrick")
+		stair_reinforcement("sandstonebrick")
+		stair_reinforcement("desert_sandstone_brick")
+		stair_reinforcement("silver_sandstone_brick")
+		stair_reinforcement("obsidianbrick")		
+	end
 end
