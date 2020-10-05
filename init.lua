@@ -1,5 +1,7 @@
 reinforced_nodes = {}
 
+reinforced_nodes.reinforceable_nodes = {}
+
 local modname = minetest.get_current_modname()
 local modpath = minetest.get_modpath(modname)
 local S = minetest.get_translator(modname)
@@ -74,8 +76,49 @@ reinforced_nodes.register_reinforced_node = function(base_node_name, new_node_na
 	end
 	
 	minetest.register_node(new_node_name, new_def)
-	
+	reinforced_nodes.reinforceable_nodes[base_node_name] = new_node_name
 end
+
+minetest.register_craftitem("reinforced_nodes:steel_reinforcement", {
+    description = S("Steel Reinforcement"),
+    inventory_image = "reinforced_nodes_steel_reinforcement.png",
+
+	on_use = function(itemstack, user, pointed_thing)
+		if pointed_thing.type ~= "node" then
+			return itemstack
+		end
+		
+		local pos = pointed_thing.under
+		local player_name = user:get_player_name()
+		
+		if minetest.is_protected(pos, player_name) then
+			minetest.record_protection_violation(pos, player_name)
+			return itemstack
+		end
+		
+		local node = minetest.get_node(pos)
+		
+		if not node then
+			return itemstack
+		end
+		
+		local replacement = reinforced_nodes.reinforceable_nodes[node.name]
+		
+		if replacement == nil then
+			return itemstack
+		end
+		
+		local node = minetest.get_node(pos)
+		node.name = replacement
+		minetest.swap_node(pos, node)
+		--TODO play sound
+		
+		if not minetest.is_creative_enabled(player_name) then
+			itemstack:take_item(1)
+		end
+		return itemstack		
+	end,
+})
 
 if minetest.get_modpath("default") then
 	reinforced_nodes.register_reinforced_node("default:stonebrick", "reinforced_nodes:stonebrick",
