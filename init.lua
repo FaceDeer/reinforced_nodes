@@ -24,6 +24,8 @@ end
 --	overlay_texture = 
 --}
 
+local reinforcers_per_ingot = 4
+
 reinforced_nodes.register_reinforced_node = function(base_node_name, new_node_name, reinforcement_def)
 	local base_def = minetest.registered_nodes[base_node_name]
 	assert(base_def ~= nil)
@@ -68,7 +70,7 @@ reinforced_nodes.register_reinforced_node = function(base_node_name, new_node_na
                     items = {drop_name},
                 },
                 {
-                    rarity = 10,
+                    rarity = reinforcers_per_ingot,
                     items = {"default:steel_ingot"},
                 },
 			}
@@ -118,6 +120,15 @@ minetest.register_craftitem("reinforced_nodes:steel_reinforcement", {
 		end
 		return itemstack		
 	end,
+})
+
+minetest.register_craft({
+    output = "reinforced_nodes:steel_reinforcement " .. tostring(reinforcers_per_ingot*4),
+    recipe = {
+        {'default:steel_ingot', '', 'default:steel_ingot'},
+        {'', '', ''},
+        {'default:steel_ingot', '', 'default:steel_ingot'},
+    },
 })
 
 if minetest.get_modpath("default") then
