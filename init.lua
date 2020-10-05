@@ -111,7 +111,7 @@ minetest.register_craftitem("reinforced_nodes:steel_reinforcement", {
 		local node = minetest.get_node(pos)
 		node.name = replacement
 		minetest.swap_node(pos, node)
-		--TODO play sound
+		minetest.sound_play({name="reinforced_nodes_clink", gain=0.25}, {pos = pos}, true)
 		
 		if not minetest.is_creative_enabled(player_name) then
 			itemstack:take_item(1)
